@@ -125,7 +125,8 @@ function clearMemory(){
         knowledge = {
             "hello":"Hello!",
             "how are you":"I'm doing great!",
-            "what is your name":"I'm Liminal AI."
+            "what is your name":"I'm Liminal AI.",
+            "goodbye": "Goodbye!"
         };
 
         addMessage("Memory cleared.","ai");
