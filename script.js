@@ -1,3 +1,15 @@
+console.log("Liminal AI loaded!");
+
+const messages = document.getElementById("messages");
+
+const learnReplies = [
+    "Thanks! I'll remember that.",
+    "Interesting! I've learned something new.",
+    "Got it! I'll keep that in mind.",
+    "Thanks for teaching me!"
+];
+
+// the rest of your code continues here...
 const messages = document.getElementById("messages");
 const learnReplies = [
     "Thanks! I'll remember that.",
@@ -8,7 +20,8 @@ const learnReplies = [
 let knowledge = JSON.parse(localStorage.getItem("knowledge")) || {
     "hello": "Hello!",
     "how are you": "I'm doing great!",
-    "what is your name": "I'm Liminal AI."
+    "what is your name": "I'm Liminal AI.",
+    "goodbye": "Goodbye!"
 };
 
 let learning = false;
