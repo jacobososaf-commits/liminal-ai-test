@@ -12,40 +12,31 @@
 <div id="chat">
 
     <div id="header">
-
-        <div id="title">
-            🤖 Liminal AI
-        </div>
-
-        <div id="status">
-            🟢 Online
-        </div>
-
+        <div id="title">🤖 Liminal AI</div>
+        <div id="status">🟢 Online</div>
     </div>
 
     <div id="messages">
-
         <div class="ai">
             Hello! I'm Liminal AI.
         </div>
-
     </div>
 
     <div id="inputArea">
-
         <input
             type="text"
             id="userInput"
             placeholder="Ask me anything..."
+            autocomplete="off"
         >
 
-       <button onclick="sendMessage()">
-    Send
-</button>
+        <button id="sendButton" onclick="sendMessage()">
+            Send
+        </button>
 
-<button onclick="clearMemory()">
-    Clear
-</button>
+        <button id="clearButton" onclick="clearMemory()">
+            Clear
+        </button>
     </div>
 
 </div>

@@ -1,6 +1,7 @@
 console.log("Liminal AI loaded!");
 
 const messages = document.getElementById("messages");
+const input = document.getElementById("userInput");
 
 const learnReplies = [
     "Thanks! I'll remember that.",
@@ -9,126 +10,130 @@ const learnReplies = [
     "Thanks for teaching me!"
 ];
 
-// the rest of your code continues here...
-const messages = document.getElementById("messages");
-const learnReplies = [
-    "Thanks! I'll remember that.",
-    "Interesting! I've learned something new.",
-    "Got it! I'll keep that in mind.",
-    "Thanks for teaching me!"
-];
-let knowledge = JSON.parse(localStorage.getItem("knowledge")) || {
-    "hello": "Hello!",
-    "how are you": "I'm doing great!",
-    "what is your name": "I'm Liminal AI."
-};
+// Load saved knowledge
+let knowledge = JSON.parse(localStorage.getItem("knowledge"));
+
+if (!knowledge) {
+    knowledge = {
+        "hello": "Hello!",
+        "hi": "Hello!",
+        "hey": "Hey there!",
+        "how are you": "I'm doing great!",
+        "what is your name": "I'm Liminal AI.",
+        "who made you": "I was created by Jacobo."
+    };
+}
 
 let learning = false;
 let lastQuestion = "";
 
-function saveKnowledge(){
+// Save knowledge
+function saveKnowledge() {
     localStorage.setItem("knowledge", JSON.stringify(knowledge));
 }
 
-function addMessage(text, sender){
+// Add a message to the chat
+function addMessage(text, sender) {
 
-    let div = document.createElement("div");
-
+    const div = document.createElement("div");
     div.className = sender;
 
-  let now = new Date();
+    const now = new Date();
 
-let time = now.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit'
-});
+    const time = now.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
 
-div.innerHTML = `
-    ${text}
-    <div class="time">${time}</div>
-`;
+    div.innerHTML = `
+        <div>${text}</div>
+        <div class="time">${time}</div>
+    `;
+
     messages.appendChild(div);
-
     messages.scrollTop = messages.scrollHeight;
-
 }
 
-function sendMessage(){
+// AI thinking
+function think(text) {
 
-    let input = document.getElementById("userInput");
+    text = text.toLowerCase().trim();
 
-    let text = input.value.trim().toLowerCase();
+    if (knowledge[text]) {
+        return knowledge[text];
+    }
 
-    if(text=="") return;
+    learning = true;
+    lastQuestion = text;
 
-    addMessage(text,"user");
+    return "I don't know that yet. Can you teach me?";
+}
 
-    input.value="";
+// Send message
+function sendMessage() {
 
-    if(learning){
+    const text = input.value.trim();
 
-        knowledge[lastQuestion]=text;
+    if (text === "") return;
+
+    addMessage(text, "user");
+
+    input.value = "";
+
+    if (learning) {
+
+        knowledge[lastQuestion] = text;
 
         saveKnowledge();
 
-        learning=false;
+        learning = false;
 
-       let reply = learnReplies[Math.floor(Math.random() * learnReplies.length)];
+        const reply =
+            learnReplies[Math.floor(Math.random() * learnReplies.length)];
 
-addMessage(reply, "ai");
+        setTimeout(() => {
+            addMessage(reply, "ai");
+        }, 500);
 
         return;
-
     }
 
-    let reply = think(text);
+    setTimeout(() => {
 
-    setTimeout(function(){
+        const reply = think(text);
 
-        addMessage(reply,"ai");
+        addMessage(reply, "ai");
 
-    },500);
-
+    }, 500);
 }
 
-function think(text){
+// Enter key
+input.addEventListener("keydown", function(event) {
 
-    if(knowledge[text]){
-
-        return knowledge[text];
-
-    }
-
-    lastQuestion=text;
-
-    learning=true;
-
-    return "I don't know that yet. Can you teach me?";
-
-}
-document.getElementById("userInput").addEventListener("keypress", function(event){
-
-    if(event.key === "Enter"){
-
+    if (event.key === "Enter") {
         sendMessage();
-
     }
 
 });
-function clearMemory(){
 
-    if(confirm("Delete everything Liminal AI has learned?")){
+// Clear memory
+function clearMemory() {
 
-        localStorage.removeItem("knowledge");
+    if (!confirm("Delete everything Liminal AI has learned?"))
+        return;
 
-        knowledge = {
-            "hello":"Hello!",
-            "how are you":"I'm doing great!",
-            "what is your name":"I'm Liminal AI."
-        };
+    localStorage.removeItem("knowledge");
 
-        addMessage("Memory cleared.","ai");
+    knowledge = {
+        "hello": "Hello!",
+        "hi": "Hello!",
+        "hey": "Hey there!",
+        "how are you": "I'm doing great!",
+        "what is your name": "I'm Liminal AI.",
+        "who made you": "I was created by Jacobo."
+    };
 
-    }
-
+    addMessage("Memory cleared successfully.", "ai");
 }
+
+console.log("Liminal AI is ready!");
