@@ -20,8 +20,7 @@ const learnReplies = [
 let knowledge = JSON.parse(localStorage.getItem("knowledge")) || {
     "hello": "Hello!",
     "how are you": "I'm doing great!",
-    "what is your name": "I'm Liminal AI.",
-    "goodbye": "Goodbye!"
+    "what is your name": "I'm Liminal AI."
 };
 
 let learning = false;
@@ -125,8 +124,7 @@ function clearMemory(){
         knowledge = {
             "hello":"Hello!",
             "how are you":"I'm doing great!",
-            "what is your name":"I'm Liminal AI.",
-            "goodbye": "Goodbye!"
+            "what is your name":"I'm Liminal AI."
         };
 
         addMessage("Memory cleared.","ai");
