@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Johnson AI</title>
+    <title>Liminal AI 0.3</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,26 +11,32 @@
 
 <div id="chat">
 
-    <div id="messages">
+    <div id="header">
+        <div id="title">🤖 Liminal AI</div>
+        <div id="status">🟢 Online</div>
+    </div>
 
+    <div id="messages">
         <div class="ai">
             Hello! I'm Liminal AI.
         </div>
-
     </div>
 
     <div id="inputArea">
-
         <input
             type="text"
             id="userInput"
             placeholder="Ask me anything..."
+            autocomplete="off"
         >
 
-        <button onclick="sendMessage()">
+        <button id="sendButton" onclick="sendMessage()">
             Send
         </button>
 
+        <button id="clearButton" onclick="clearMemory()">
+            Clear
+        </button>
     </div>
 
 </div>
