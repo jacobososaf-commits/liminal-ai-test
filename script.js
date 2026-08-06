@@ -57,6 +57,47 @@ function addMessage(text, sender) {
 function think(text) {
 
     text = text.toLowerCase().trim();
+    // Math
+const mathMatch = text.match(/(-?\d+(\.\d+)?)\s*([\+\-\*\/])\s*(-?\d+(\.\d+)?)/);
+
+if (
+    text.startsWith("how much is") ||
+    text.startsWith("what is") ||
+    text.startsWith("calculate")
+) {
+
+    if (mathMatch) {
+
+        const a = parseFloat(mathMatch[1]);
+        const op = mathMatch[3];
+        const b = parseFloat(mathMatch[4]);
+
+        let result;
+
+        switch (op) {
+            case "+":
+                result = a + b;
+                break;
+
+            case "-":
+                result = a - b;
+                break;
+
+            case "*":
+                result = a * b;
+                break;
+
+            case "/":
+                if (b === 0) {
+                    return "You can't divide by zero.";
+                }
+                result = a / b;
+                break;
+        }
+
+        return "It's " + result + ".";
+    }
+}
 
     // Time
     if (
