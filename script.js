@@ -1,110 +1,32 @@
-console.log("Liminal AI loaded!");
+// ==========================================
+// LIMINAL AI 0.4
+// ==========================================
 
-const messages = document.getElementById("messages");
-const input = document.getElementById("userInput");
 
-const learnReplies = [
-    "Thanks! I'll remember that.",
-    "Interesting! I've learned something new.",
-    "Got it! I'll keep that in mind.",
-    "Thanks for teaching me!"
-];
+// ---------------- MEMORY ----------------
 
-// Load saved knowledge
-let knowledge = JSON.parse(localStorage.getItem("knowledge"));
+let memory = JSON.parse(localStorage.getItem("liminalMemory")) || {};
 
-if (!knowledge) {
-    knowledge = {
-        "hello": "Hello!",
-        "hi": "Hello!",
-        "hey": "Hey there!",
-        "how are you": "I'm doing great!",
-        "what is your name": "I'm Liminal AI.",
-        "who made you": "I was created by Jacobo."
-    };
+function saveMemory() {
+    localStorage.setItem("liminalMemory", JSON.stringify(memory));
 }
 
-let learning = false;
-let lastQuestion = "";
 
-// Save knowledge
-function saveKnowledge() {
-    localStorage.setItem("knowledge", JSON.stringify(knowledge));
-}
-
-// Add a message to the chat
-function addMessage(text, sender) {
-
-    const div = document.createElement("div");
-    div.className = sender;
-
-    const now = new Date();
-
-    const time = now.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit"
-    });
-
-    div.innerHTML = `
-        <div>${text}</div>
-        <div class="time">${time}</div>
-    `;
-
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
-}
+// ---------------- THINK ----------------
 
 function think(text) {
 
     text = text.toLowerCase().trim();
-    // Math
-const mathMatch = text.match(/(-?\d+(\.\d+)?)\s*([\+\-\*\/])\s*(-?\d+(\.\d+)?)/);
 
-if (
-    text.startsWith("how much is") ||
-    text.startsWith("what is") ||
-    text.startsWith("calculate")
-) {
 
-    if (mathMatch) {
+    // TIME
 
-        const a = parseFloat(mathMatch[1]);
-        const op = mathMatch[3];
-        const b = parseFloat(mathMatch[4]);
-
-        let result;
-
-        switch (op) {
-            case "+":
-                result = a + b;
-                break;
-
-            case "-":
-                result = a - b;
-                break;
-
-            case "*":
-                result = a * b;
-                break;
-
-            case "/":
-                if (b === 0) {
-                    return "You can't divide by zero.";
-                }
-                result = a / b;
-                break;
-        }
-
-        return "It's " + result + ".";
-    }
-}
-
-    // Time
     if (
         text.includes("what time is it") ||
-        text.includes("time") ||
+        text === "time" ||
         text.includes("current time")
     ) {
+
         const now = new Date();
 
         return "The current time is " +
@@ -114,98 +36,289 @@ if (
             }) + ".";
     }
 
-    // Date
+
+    // DATE
+
     if (
-        text.includes("what is today's date") ||
-        text.includes("what day is it") ||
-        text.includes("date")
+        text.includes("what is the date") ||
+        text.includes("what's the date") ||
+        text === "date"
     ) {
+
         const now = new Date();
 
         return "Today is " +
-            now.toLocaleDateString();
+            now.toLocaleDateString([], {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+            }) + ".";
     }
 
-    // Jokes
-    if (
-        text.includes("tell me a joke") ||
-        text.includes("joke") ||
-        text.includes("make me laugh")
-    ) {
+
+    // GREETINGS
+
+    if (text === "hello" || text === "hi") {
+        return "Hello!";
+    }
+
+    if (text === "hey") {
+        return "Hey there!";
+    }
+
+
+    // BASIC QUESTIONS
+
+    if (text.includes("how are you")) {
+        return "I'm doing great!";
+    }
+
+    if (text.includes("what is your name")) {
+        return "I'm Liminal AI.";
+    }
+
+    if (text.includes("who made you")) {
+        return "I was created by Jacobo.";
+    }
+
+
+    // JOKES
+
+    if (text.includes("tell me a joke")) {
 
         const jokes = [
-            "Why did the computer get cold? Because it left its Windows open!",
-            "Why do programmers prefer dark mode? Because light attracts bugs.",
-            "Why was the math book sad? It had too many problems.",
-            "Why did the robot go on vacation? It needed to recharge.",
-            "I would tell you a UDP joke, but you might not get it.",
-            "Why don't skeletons fight each other? They don't have the guts.",
-            "Why was the JavaScript developer broke? Because he kept using null."
+            "Why did the computer go to the doctor? Because it had a virus.",
+            "Why was the computer cold? It left its Windows open.",
+            "What do computers eat? Microchips!",
+            "Why did the programmer quit his job? He didn't get arrays."
         ];
 
         return jokes[Math.floor(Math.random() * jokes.length)];
     }
 
-    // Greetings
+
+    // REMEMBER THAT
+
+    if (text.startsWith("remember that ")) {
+
+        const information = text.substring(14).trim();
+
+        const parts = information.split(" is ");
+
+        if (parts.length >= 2) {
+
+            let key = parts[0].trim();
+
+            if (key.startsWith("my ")) {
+                key = key.substring(3);
+            }
+
+            const value = parts.slice(1).join(" is ").trim();
+
+            memory[key] = value;
+
+            saveMemory();
+
+            return "I'll remember that your " +
+                key + " is " + value + ".";
+        }
+
+        return "Try saying: remember that my favorite color is yellow.";
+    }
+
+
+    // NATURAL MEMORY
+
     if (
-        text === "hello" ||
-        text === "hi" ||
-        text === "hey"
+        text.startsWith("my ") &&
+        text.includes(" is ")
     ) {
-        return "Hello! How can I help you today?";
+
+        const parts = text.split(" is ");
+
+        let key = parts[0].substring(3).trim();
+
+        const value = parts.slice(1).join(" is ").trim();
+
+        memory[key] = value;
+
+        saveMemory();
+
+        return "Got it. I'll remember that your " +
+            key + " is " + value + ".";
     }
 
-    // Learned knowledge
-    if (knowledge[text]) {
-        return knowledge[text];
+
+    // I AM MEMORY
+
+    if (text.startsWith("i am ")) {
+
+        const value = text.substring(5);
+
+        memory["identity"] = value;
+
+        saveMemory();
+
+        return "Got it. I'll remember that you are " +
+            value + ".";
     }
 
-    // Learn new things
-    lastQuestion = text;
-    learning = true;
 
-    return "I don't know that yet. Can you teach me?";
+    // LOCATION MEMORY
+
+    if (text.startsWith("i live in ")) {
+
+        const value = text.substring(10);
+
+        memory["location"] = value;
+
+        saveMemory();
+
+        return "Got it. I'll remember that you live in " +
+            value + ".";
+    }
+
+
+    // ASK MEMORY
+
+    if (
+        text.startsWith("what is my ") ||
+        text.startsWith("what's my ")
+    ) {
+
+        let key;
+
+        if (text.startsWith("what is my ")) {
+            key = text.substring(11);
+        } else {
+            key = text.substring(10);
+        }
+
+        if (memory[key]) {
+            return "Your " + key + " is " + memory[key] + ".";
+        }
+
+        return "I don't remember your " + key + " yet.";
+    }
+
+
+    // FORGET
+
+    if (text.startsWith("forget my ")) {
+
+        const key = text.substring(10);
+
+        delete memory[key];
+
+        saveMemory();
+
+        return "Okay, I forgot your " + key + ".";
+    }
+
+
+    // SHOW MEMORY
+
+    if (
+        text === "what do you remember" ||
+        text === "show my memories"
+    ) {
+
+        const keys = Object.keys(memory);
+
+        if (keys.length === 0) {
+            return "I don't remember anything yet.";
+        }
+
+        let response = "Here's what I remember:<br><br>";
+
+        keys.forEach(function(key) {
+
+            response +=
+                "• " + key + " = " + memory[key] + "<br>";
+
+        });
+
+        return response;
+    }
+
+
+    // MATH
+
+    if (text.match(/^[0-9+\-*/().\s]+$/)) {
+
+        try {
+
+            const answer = Function(
+                '"use strict"; return (' + text + ')'
+            )();
+
+            return "The answer is " + answer + ".";
+
+        } catch {
+
+            return "I couldn't calculate that.";
+        }
+    }
+
+
+    return "I don't know how to answer that yet.";
 }
-// Send message
+
+
+
+// ---------------- SEND MESSAGE ----------------
+
 function sendMessage() {
+
+    const input = document.getElementById("userInput");
+    const messages = document.getElementById("messages");
 
     const text = input.value.trim();
 
-    if (text === "") return;
 
-    addMessage(text, "user");
-
-    input.value = "";
-
-    if (learning) {
-
-        knowledge[lastQuestion] = text;
-
-        saveKnowledge();
-
-        learning = false;
-
-        const reply =
-            learnReplies[Math.floor(Math.random() * learnReplies.length)];
-
-        setTimeout(() => {
-            addMessage(reply, "ai");
-        }, 500);
-
+    if (text === "") {
         return;
     }
 
-    setTimeout(() => {
 
-        const reply = think(text);
+    // USER
 
-        addMessage(reply, "ai");
+    const userMessage = document.createElement("div");
 
-    }, 500);
+    userMessage.className = "user";
+
+    userMessage.textContent = text;
+
+    messages.appendChild(userMessage);
+
+
+
+    // AI
+
+    const aiMessage = document.createElement("div");
+
+    aiMessage.className = "ai";
+
+    aiMessage.innerHTML = think(text);
+
+    messages.appendChild(aiMessage);
+
+
+
+    input.value = "";
+
+    messages.scrollTop = messages.scrollHeight;
+
 }
 
-// Enter key
-input.addEventListener("keydown", function(event) {
+
+
+// ---------------- ENTER KEY ----------------
+
+document
+.getElementById("userInput")
+.addEventListener("keydown", function(event) {
 
     if (event.key === "Enter") {
         sendMessage();
@@ -213,24 +326,16 @@ input.addEventListener("keydown", function(event) {
 
 });
 
-// Clear memory
-function clearMemory() {
 
-    if (!confirm("Delete everything Liminal AI has learned?"))
-        return;
 
-    localStorage.removeItem("knowledge");
+// ---------------- CLEAR CHAT ----------------
 
-    knowledge = {
-        "hello": "Hello!",
-        "hi": "Hello!",
-        "hey": "Hey there!",
-        "how are you": "I'm doing great!",
-        "what is your name": "I'm Liminal AI.",
-        "who made you": "I was created by Jacobo."
-    };
+function clearChat() {
 
-    addMessage("Memory cleared successfully.", "ai");
+    document.getElementById("messages").innerHTML = `
+        <div class="ai">
+            Hello! I'm Liminal AI.
+        </div>
+    `;
+
 }
-
-console.log("Liminal AI is ready!");

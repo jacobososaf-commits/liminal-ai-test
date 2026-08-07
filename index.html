@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liminal AI 0.3</title>
-
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+<link rel="stylesheet" href="style.css">
 
 <div id="chat">
 
@@ -16,13 +7,16 @@
         <div id="status">🟢 Online</div>
     </div>
 
+
     <div id="messages">
         <div class="ai">
             Hello! I'm Liminal AI.
         </div>
     </div>
 
+
     <div id="inputArea">
+
         <input
             type="text"
             id="userInput"
@@ -34,14 +28,13 @@
             Send
         </button>
 
-        <button id="clearButton" onclick="clearMemory()">
+        <button id="clearButton" onclick="clearChat()">
             Clear
         </button>
+
     </div>
 
 </div>
 
-<script src="script.js"></script>
 
-</body>
-</html>
+<script src="script.js"></script>
