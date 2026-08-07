@@ -1,21 +1,44 @@
-<link rel="stylesheet" href="style.css">
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Liminal AI 0.4</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+
+<body>
 
 <div id="chat">
 
+
     <div id="header">
-        <div id="title">🤖 Liminal AI 0.4</div>
-        <div id="status">🟢 Online</div>
+
+        <div id="title">
+            🤖 Liminal AI 0.4
+        </div>
+
+        <div id="status">
+            🟢 Online
+        </div>
+
     </div>
+
 
 
     <div id="messages">
+
         <div class="ai">
             Hello! I'm Liminal AI 0.4.
         </div>
+
     </div>
 
 
+
     <div id="inputArea">
+
 
         <input
             type="text"
@@ -24,17 +47,33 @@
             autocomplete="off"
         >
 
-        <button id="sendButton" onclick="sendMessage()">
+
+        <button 
+            id="sendButton"
+            onclick="sendMessage()"
+        >
             Send
         </button>
 
-        <button id="clearButton" onclick="clearChat()">
+
+        <button 
+            id="clearButton"
+            onclick="clearChat()"
+        >
             Clear
         </button>
 
+
     </div>
+
 
 </div>
 
 
+
 <script src="script.js"></script>
+
+
+</body>
+
+</html>
